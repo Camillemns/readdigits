@@ -76,11 +76,13 @@ int main(int argc, char *argv[])
     put_test_value_in_array(test, label_test);
     free(label_test);
 
-    for (int j = 0; j < 20; j++)
+    int m ;
+    for (int j = 0; j < 100; j++)
     {
-        int m = 0;
+        m = 0;
         for (int i = 0; i < a -> nbr_input; i++)
         {
+            a -> input[i] = 0;
             a -> input[i] = test[j][i];
         }
         feedforward(a);
@@ -90,7 +92,11 @@ int main(int argc, char *argv[])
         }
         m = max_array( a -> output, a -> nbr_output);
         printf(" %d\n", m);
+        m = 0;
     }
+
+    
+
     free_test(test);
     free_train(train);
     free(label_train);

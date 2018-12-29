@@ -88,6 +88,10 @@ void feedforward(net* a)
     {
         a -> output[i] = 0;
     }
+    for (int i = 0; i < a -> nbr_hidden; i++)
+    {
+        a -> hidden[i] = 0;
+    }
     float sum;
     for (int i = 0; i < a -> nbr_hidden; i++)
     {
@@ -199,42 +203,59 @@ void new_weights_bias(net *a)
 
 void run_neural_network(net *a, float **train, int *label, int epoch)
 {
-    for(int t = 0; t < 1001; t++)
+    for (int b = 0; b < epoch; b++)
     {
-        int r = label[t];
-        for (int i = 0; i < a -> nbr_output; i++)
+        int *c = calloc(10000, sizeof(int));
+        for (int w = 0; w < 10000; w++)
         {
-            a -> goal[i] = 0;
-            if (i == r)
+            int t = rand() % 10000;
+            if( c[t] == 0)
             {
-                a -> goal[i] = 1;
-            }
-        }
-
-        for (int i = 0; i < a-> nbr_input; i++)
-        {
-            a -> input[i] = train[t][i];
-        }
-        for( int i = 0; i < epoch; i++)
-        {
-            feedforward(a);
-            backpropagation(a);
-            new_weights_bias(a);
-            for (int i = 0; i < a -> nbr_hidden; i++)
-            {
-                for (int j = 0; j < a -> nbr_input; j++)
+                int r = label[t];
+                for (int i = 0; i < a -> nbr_output; i++)
                 {
-                    a -> dwIH[j][i] = 0;
+                    a -> goal[i] = 0;
+                    if (i == r)
+                    {
+                        a -> goal[i] = 1;
+                    }
+                    a -> output[i] = 0;
                 }
-                a -> dbIH[i] = 0;
-            }
-            for (int i = 0; i < a -> nbr_output; i++)
-            {
-                for (int j = 0; j < a -> nbr_hidden; j++)
+                for (int i = 0; i < a -> nbr_hidden; i++)
                 {
-                    a -> dwHO[j][i] = 0;
+                    a -> hidden[i] = 0;
                 }
-                a -> dbHO[i] = 0;
+                for (int i = 0; i < a-> nbr_input; i++)
+                {
+                    a -> input[i] = train[t][i];
+                }
+                feedforward(a);
+                backpropagation(a);
+                new_weights_bias(a);
+                for (int i = 0; i < a -> nbr_hidden; i++)
+                {
+                    for (int j = 0; j < a -> nbr_input; j++)
+                    {
+                        a -> dwIH[j][i] = 0;
+                    }
+                    a -> dbIH[i] = 0;
+                }
+                for (int i = 0; i < a -> nbr_output; i++)
+                {
+                    for (int j = 0; j < a -> nbr_hidden; j++)
+                    {
+                        a -> dwHO[j][i] = 0;
+                    }
+                    a -> dbHO[i] = 0;
+                }
+                c[t] = 1;
+            }
+            if ( w == 1000 - 1)
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                    c[i] = 0;
+                }
             }
         }
     }
